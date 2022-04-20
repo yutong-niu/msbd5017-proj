@@ -14,7 +14,7 @@ contract Ownable {
      * the contract to the sender account.
      */
     constructor() public {
-        _owner = msg.sender;
+        _owner = tx.origin;
     }
 
     /*
@@ -29,10 +29,10 @@ contract Ownable {
     }
 
     /*
-     * @return true if `msg.sender` is the owner of the contract.
+     * @return true if `tx.origin` is the owner of the contract.
      */
     function isOwner() public view returns (bool) {
-        return msg.sender == _owner;
+        return tx.origin == _owner;
     }
 
     /*
