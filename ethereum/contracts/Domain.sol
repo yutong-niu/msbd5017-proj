@@ -56,9 +56,11 @@ contract Domain is Ownable {
      */
     function getRecordHash(
         string memory name
-    ) private
+    )
+    private
     view
-    returns (bytes32) {
+    returns (bytes32)
+    {
         // @dev - Tightly pack parameters in struct for keccak256
         return keccak256(abi.encodePacked(name, domain, tld));
     }
@@ -69,10 +71,12 @@ contract Domain is Ownable {
      */
     function query(
         string memory name
-    ) public
+    )
+    public
     view
     recordExists(name)
-    returns (string memory) {
+    returns (string memory)
+    {
         // @dev - Compute record hash given the record name.
         bytes32 recordHash = getRecordHash(name);
         // @dev - Return the record value given the record hash.
@@ -85,9 +89,11 @@ contract Domain is Ownable {
      */
     function reset(
         string memory name
-    ) public
+    )
+    public
     onlyOwner
-    recordExists(name) {
+    recordExists(name)
+    {
         // @dev - Compute record hash given the record name.
         bytes32 recordHash = getRecordHash(name);
         // @dev - Reset the record value to empty string.
@@ -99,7 +105,13 @@ contract Domain is Ownable {
      * @param name - record name.
      * @param value - record value.
      */
-    function set(string memory name, string memory value) public onlyOwner {
+    function set(
+        string memory name,
+        string memory value
+    )
+    public
+    onlyOwner
+    {
         // @dev - Compute record hash given the record name.
         bytes32 recordHash = getRecordHash(name);
         // @dev - Set the record value given the record hash.
