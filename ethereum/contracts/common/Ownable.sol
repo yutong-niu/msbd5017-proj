@@ -21,7 +21,10 @@ contract Ownable {
      * @dev - Throws if called by an account other than the owner.
      */
     modifier onlyOwner() {
-        require(isOwner());
+        require(
+            isOwner(),
+            "Permission denied"
+        );
         _;
     }
 
