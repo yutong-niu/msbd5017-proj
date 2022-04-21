@@ -101,7 +101,7 @@ contract DomainFactory is Ownable {
      */
     modifier collectPayment() {
         require(
-            msg.value > COST,
+            msg.value >= COST,
             "Domain price is at least 1 ether"
         );
         _;
