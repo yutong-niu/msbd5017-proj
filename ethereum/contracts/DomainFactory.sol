@@ -101,7 +101,7 @@ contract DomainFactory is Ownable {
     }
 
     function _isRegistered(string memory domainName) private view returns (bool) {
-        address domainAddress = getDomainAddress(domainName);
+        address domainAddress = domainToAddress[getDomainHash(domainName)];
         return ! _isExpired(domainAddress);
     }
 
@@ -122,5 +122,9 @@ contract DomainFactory is Ownable {
         address domainAddress = getDomainAddress(domainName);
         Domain targetDomain = Domain(domainAddress);
         return targetDomain.query(recordName);
+    }
+
+    function withdraw() public onlyOwner {
+        msg.sender.transfer(address(this).balance);
     }
 }
