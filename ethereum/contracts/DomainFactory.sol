@@ -14,8 +14,8 @@ contract DomainFactory is Ownable {
     /** STATE VARIABLES */
     string public topLevel;
 
-    mapping(bytes32 => address) private nameToAddress;
-    mapping(address => address[]) private userToAddress;
+    mapping(bytes32 => address) private domainToAddress;
+    mapping(address => address[]) private ownedByAccount;
     mapping(address => uint) private expires;
 
     /** CONSTRUCTOR */
@@ -66,36 +66,60 @@ contract DomainFactory is Ownable {
     }
 
     /** FUNCTIONS */
+    /** GETTERS */
+    function getCost() public pure returns (uint) {
+        return COST;
+    }
+    function getExpiration() public pure returns (uint) {
+        return EXPIRATION;
+    }
+
     function getDomainHash(string memory domainName) private view returns (bytes32) {
         return keccak256(abi.encodePacked(domainName, topLevel));
     }
 
-    function getDomainAddress(string memory domainName) public view isRegistered(domainName) returns (address) {
+    function getDomainAddress(string memory domainName) private view isRegistered(domainName) returns (address) {
         bytes32 domainHash = getDomainHash(domainName);
-        return nameToAddress[domainHash];
+        return domainToAddress[domainHash];
+    }
+
+    function getDomainExpiration(string memory domainName) public view isRegistered(domainName) returns (uint) {
+        address domainAddress = getDomainAddress(domainName);
+        return expires[domainAddress];
+    }
+
+    function getAccountDetail() public view returns (address[] memory) {
+        return ownedByAccount[tx.origin];
+    }
+
+    function isDomainExpired(address domainAddress) public view returns (bool) {
+        return _isExpired(domainAddress);
+    }
+
+    function _isExpired(address domainAddress) private view returns (bool) {
+        return expires[domainAddress] < block.timestamp;
     }
 
     function _isRegistered(string memory domainName) private view returns (bool) {
-        return expires[nameToAddress[getDomainHash(domainName)]] > block.timestamp;
+        address domainAddress = getDomainAddress(domainName);
+        return ! _isExpired(domainAddress);
     }
 
     function register(string memory domainName) public payable isAvailable(domainName) collectPayment {
         address newDomain = address(new Domain(domainName, topLevel));
         bytes32 domainHash = getDomainHash(domainName);
-        nameToAddress[domainHash] = newDomain;
-        userToAddress[tx.origin].push(newDomain);
+        domainToAddress[domainHash] = newDomain;
+        ownedByAccount[tx.origin].push(newDomain);
         expires[newDomain] = block.timestamp + EXPIRATION;
     }
 
     function extend(string memory domainName) public payable isRegistered(domainName) collectPayment {
-        bytes32 domainHash = getDomainHash(domainName);
-        address domainAddress = nameToAddress[domainHash];
-        expires[domainAddress] += 365 days;
+        address domainAddress = getDomainAddress(domainName);
+        expires[domainAddress] += EXPIRATION;
     }
 
     function query(string memory recordName, string memory domainName) public view isRegistered(domainName) returns (string memory) {
-        bytes32 domainHash = getDomainHash(domainName);
-        address domainAddress = nameToAddress[domainHash];
+        address domainAddress = getDomainAddress(domainName);
         Domain targetDomain = Domain(domainAddress);
         return targetDomain.query(recordName);
     }
