@@ -4,8 +4,12 @@ const hybridResolve = require('./resolver')
 const server = dns2.createServer({
   udp: true,
   handle: async (request, send, rinfo) => {
-    const response = await hybridResolve(request); 
-    send(response)
+    try {
+      const response = await hybridResolve(request); 
+      send(response)
+    } catch (error) {
+      server.emit('requestError', error);
+    }
   }
 });
 
