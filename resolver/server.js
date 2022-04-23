@@ -30,7 +30,7 @@ server.on('close', () => {
         await server.listen({
                 udp: {
                         port: 53,
-                        address: "127.0.0.1",
+                        address: "0.0.0.0",
                         type: "udp4",    // IPv4 or IPv6 (Must be either "udp4" or "udp6")
                 },
         }),
