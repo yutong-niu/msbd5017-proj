@@ -23,27 +23,36 @@ const distribQuery = async (name) => {
         '0x2B896740E059cb88Ab4A6AFc68dd1B532BCf415F'
     );
 
-
-    const answer = await instance.methods.query(queryName,domainName).call();
-
-    ipRegex = /^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)(\.(?!$)|$)){4}$/;
-    if (ipRegex.test(answer)) {
+    try {
+        const answer = await instance.methods.query(queryName,domainName).call();
+        const ipRegex = /^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)(\.(?!$)|$)){4}$/;
+        if (ipRegex.test(answer)) {
+            return {
+                name,
+                type: Packet.TYPE.A,
+                class: Packet.CLASS.IN,
+                ttl: 300,
+                address: answer
+            };
+        } else {
+            return {
+                name,
+                type: Packet.TYPE.CNAME,
+                class: Packet.CLASS.IN,
+                ttl: 300,
+                domain: answer
+            };
+        }
+    } catch (error) {
         return {
             name,
             type: Packet.TYPE.A,
             class: Packet.CLASS.IN,
             ttl: 300,
-            address: answer
-        };
-    } else {
-        return {
-            name,
-            type: Packet.TYPE.CNAME,
-            class: Packet.CLASS.IN,
-            ttl: 300,
-            domain: answer
-        };
+            address: ''
+        }
     }
+
 }
 
 
