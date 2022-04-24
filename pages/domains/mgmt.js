@@ -108,6 +108,39 @@ class DomainMgmt extends Component {
         this.setState({ resetLoading: false });
     };
 
+    onQuery = async (event) => {
+        event.preventDefault();
+
+        this.setState({
+            queryLoading: true,
+            resetLoading: false,
+            setLoading: false,
+            setErrorMessage: '', 
+            setSuccessMessage: '',
+            resetErrorMessage: '', 
+            resetSuccessMessage: '',
+            queryErrorMessage: '',
+            querySuccessMessage: '',
+            setRecordName: '',
+            setRecordValue: '',
+            resetRecordName: '',
+        });
+
+        try {
+            const accounts = await web3.eth.getAccounts();
+            const domain = Domain(this.props.address);
+            const response = await domain.methods
+                .query(this.state.queryRecordName).call()
+            this.setState({
+                querySuccessMessage: response,
+            });
+        } catch (err) {
+            this.setState({ queryErrorMessage: "Unknown host." });
+        }
+        
+        this.setState({ queryLoading: false });
+    };
+
     render () {
         return (
             <Layout>
@@ -168,6 +201,26 @@ class DomainMgmt extends Component {
                                         <Message error header="Oops!" content={this.state.resetErrorMessage} />
                                         <Message success header="Success" content={this.state.resetSuccessMessage} />
                                         <Button loading={this.state.resetLoading} primary>Submit</Button>
+                                    </Form>
+                                    
+                                    <Divider horizontal>Or</Divider>
+
+                                    <Form onSubmit={this.onQuery} error={!!this.state.queryErrorMessage} success={!!this.state.querySuccessMessage}>
+                                        <Form.Field>
+                                            <label>Query Record</label>
+                                            <Input
+                                                label={this.props.suffix}
+                                                labelPosition='right'
+                                                placeholder='recordName'
+                                                value={this.state.queryRecordName}
+                                                onChange={event =>
+                                                    this.setState({ queryRecordName: event.target.value })}
+                                            />
+                                        </Form.Field>
+                                                
+                                        <Message error header="Oops!" content={this.state.queryErrorMessage} />
+                                        <Message success header="Result" content={this.state.querySuccessMessage} />
+                                        <Button loading={this.state.queryLoading} primary>Submit</Button>
                                     </Form>
 
                                 </div>
