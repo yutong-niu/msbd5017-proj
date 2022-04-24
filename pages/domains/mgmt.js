@@ -2,16 +2,24 @@ import React, { Component } from 'react';
 import Layout from '../../components/Layout';
 import Domain from '../../ethereum/domain';
 import web3 from '../../ethereum/web3';
-import { Button, Input, Message, Form } from 'semantic-ui-react';
+import { Button, Input, Message, Form, Divider } from 'semantic-ui-react';
 import { Link } from '../../routes';
 
 class DomainMgmt extends Component {
     state = {
-        recordName: '',
-        recordValue: '',
+        setRecordName: '',
+        setRecordValue: '',
         setErrorMessage: '',
         setSuccessMessage: '',
         setLoading: false,
+        resetRecordName: '',
+        resetErrorMessage: '',
+        resetSuccessMessage: '',
+        resetLoading: false,
+        queryRecordName: '',
+        queryErrorMessage: '',
+        querySuccessMessage: '',
+        queryLoading: false,
     };
 
     static async getInitialProps(props) {
@@ -32,15 +40,23 @@ class DomainMgmt extends Component {
 
         this.setState({
             setLoading: true,
+            resetLoading:false,
+            queryLoading: false,
             setErrorMessage: '', 
             setSuccessMessage: '',
+            resetErrorMessage: '', 
+            resetSuccessMessage: '',
+            queryErrorMessage: '',
+            querySuccessMessage: '',
+            resetRecordName: '',
+            queryRecordName: '',
         });
 
         try {
             const accounts = await web3.eth.getAccounts();
             const domain = Domain(this.props.address);
             await domain.methods
-                .set(this.state.recordName, this.state.recordValue)
+                .set(this.state.setRecordName, this.state.setRecordValue)
                 .send({
                     from: accounts[0],
                     gas: '3000000'
@@ -55,6 +71,42 @@ class DomainMgmt extends Component {
         this.setState({ setLoading: false });
     };
 
+    onReset = async (event) => {
+        event.preventDefault();
+
+        this.setState({
+            resetLoading: true,
+            setLoading: false,
+            queryLoading: false,
+            setErrorMessage: '', 
+            setSuccessMessage: '',
+            resetErrorMessage: '', 
+            resetSuccessMessage: '',
+            queryErrorMessage: '',
+            querySuccessMessage: '',
+            setRecordName: '',
+            setRecordValue: '',
+            queryRecordName: '',
+        });
+
+        try {
+            const accounts = await web3.eth.getAccounts();
+            const domain = Domain(this.props.address);
+            await domain.methods
+                .reset(this.state.resetRecordName)
+                .send({
+                    from: accounts[0],
+                    gas: '3000000'
+                });
+            this.setState({
+                resetSuccessMessage: 'Record is reset!',
+            });
+        } catch (err) {
+            this.setState({ resetErrorMessage: "Failed to reset record. Access denied" });
+        }
+        
+        this.setState({ resetLoading: false });
+    };
 
     render () {
         return (
@@ -81,21 +133,41 @@ class DomainMgmt extends Component {
                                                 label={this.props.suffix}
                                                 labelPosition='right'
                                                 placeholder='recordName'
-                                                value={this.state.recordName}
+                                                value={this.state.setRecordName}
                                                 onChange={event =>
-                                                    this.setState({ recordName: event.target.value })}
+                                                    this.setState({ setRecordName: event.target.value })}
                                             />
                                             <Input
                                                 placeholder='recordValue'
-                                                value={this.state.recordValue}
+                                                value={this.state.setRecordValue}
                                                 onChange={event =>
-                                                    this.setState({ recordValue: event.target.value })}
+                                                    this.setState({ setRecordValue: event.target.value })}
                                             />
                                         </Form.Field>
                                                 
                                         <Message error header="Oops!" content={this.state.setErrorMessage} />
                                         <Message success header="Success" content={this.state.setSuccessMessage} />
                                         <Button loading={this.state.setLoading} primary>Submit</Button>
+                                    </Form>
+
+                                    <Divider horizontal>Or</Divider>
+
+                                    <Form onSubmit={this.onReset} error={!!this.state.resetErrorMessage} success={!!this.state.resetSuccessMessage}>
+                                        <Form.Field>
+                                            <label>Reset Record</label>
+                                            <Input
+                                                label={this.props.suffix}
+                                                labelPosition='right'
+                                                placeholder='recordName'
+                                                value={this.state.resetRecordName}
+                                                onChange={event =>
+                                                    this.setState({ resetRecordName: event.target.value })}
+                                            />
+                                        </Form.Field>
+                                                
+                                        <Message error header="Oops!" content={this.state.resetErrorMessage} />
+                                        <Message success header="Success" content={this.state.resetSuccessMessage} />
+                                        <Button loading={this.state.resetLoading} primary>Submit</Button>
                                     </Form>
 
                                 </div>
