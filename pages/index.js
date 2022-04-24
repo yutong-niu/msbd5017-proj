@@ -10,6 +10,7 @@ class DomainIndex extends Component {
     state = {
         domainName: '',
         queryName: '',
+        queryMessage: '',
         domainErrorMessage: '',
         queryErrorMessage: '',
         domainLoading: false,
@@ -19,7 +20,13 @@ class DomainIndex extends Component {
     onMgmtSubmit = async (event) => {
         event.preventDefault();
 
-        this.setState({ domainLoading: true, domainErrorMessage: '' });
+        this.setState({
+            domainLoading: true,
+            queryLoading: false,
+            queryMessage: '',
+            domainErrorMessage: '',
+            queryErrorMessage: '', 
+        });
 
         try {
             const domainAddress = await factory.methods
@@ -36,7 +43,13 @@ class DomainIndex extends Component {
     onQuerySubmit = async (event) => {
         event.preventDefault();
 
-        this.setState({ queryLoading: true, queryErrorMessage: '' });
+        this.setState({
+            domainLoading: false,
+            queryLoading: true,
+            queryMessage: '',
+            domainErrorMessage: '',
+            queryErrorMessage: '', 
+        });
 
         try {
             var fullQuery = this.state.queryName.split('.');
@@ -45,7 +58,7 @@ class DomainIndex extends Component {
             const response = await factory.methods
                 .query(queryName, domainName)
                 .call();
-            Router.pushRoute('/domains/' + response);
+            this.setState({queryMessage: response});
         } catch (err) {
             this.setState({ queryErrorMessage: "Unkown Host." });
         }
@@ -86,7 +99,7 @@ class DomainIndex extends Component {
 
                     <Divider horizontal>Or</Divider>
 
-                    <Form onSubmit={this.onQuerySubmit} error={!!this.state.queryErrorMessage}>
+                    <Form onSubmit={this.onQuerySubmit} error={!!this.state.queryErrorMessage} success={!!this.state.queryMessage}>
                         <Form.Field>
                             <label>Query</label>
                             <Input
@@ -99,6 +112,7 @@ class DomainIndex extends Component {
                         </Form.Field>
 
                         <Message error header="Oops!" content={this.state.queryErrorMessage} />
+                        <Message success header="Result" content={this.state.queryMessage} />
                         <Button loading={this.state.queryLoading} primary>Submit</Button>
                     </Form>
 
