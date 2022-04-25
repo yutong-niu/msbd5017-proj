@@ -3,7 +3,7 @@ import { Form, Button, Input, Message, Divider } from 'semantic-ui-react';
 import factory from '../ethereum/factory';
 import 'semantic-ui-css/semantic.min.css';
 import Layout from '../components/Layout';
-import { Link, Routes } from '../routes';
+import { Link, Router } from '../routes';
 
 class DomainIndex extends Component {
     state = {
