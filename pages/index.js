@@ -72,7 +72,6 @@ class DomainIndex extends Component {
                     <Link route="/register">
                         <a>
                             <Button 
-                                floated="right"
                                 content="Register Domain"
                                 icon="add circle"
                                 primary
@@ -80,10 +79,14 @@ class DomainIndex extends Component {
                         </a>
                     </Link>
 
+                    <Divider />
+
                     <Form onSubmit={this.onMgmtSubmit} error={!!this.state.domainErrorMessage}>
                         <Form.Field>
                             <label>Manage Domain</label>
                             <Input
+                                style={{width: 100}}
+                                type="text"
                                 label=".hkust"
                                 labelPosition='right'
                                 value={this.state.domainName}
@@ -96,12 +99,14 @@ class DomainIndex extends Component {
                         <Button loading={this.state.domainLoading} primary>Submit</Button>
                     </Form>
 
-                    <Divider horizontal>Or</Divider>
+                    <Divider />
 
                     <Form onSubmit={this.onQuerySubmit} error={!!this.state.queryErrorMessage} success={!!this.state.queryMessage}>
                         <Form.Field>
                             <label>Query</label>
                             <Input
+                                style={{width: 200}}
+                                type="text"
                                 label=".hkust"
                                 labelPosition='right'
                                 value={this.state.queryName}

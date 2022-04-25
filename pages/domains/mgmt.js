@@ -162,7 +162,10 @@ class DomainMgmt extends Component {
                                     <Form onSubmit={this.onSet} error={!!this.state.setErrorMessage} success={!!this.state.setSuccessMessage}>
                                         <Form.Field>
                                             <label>Set Record</label>
+                                            <div>
                                             <Input
+                                                style={{ width: 200 }}
+                                                type="text"
                                                 label={this.props.suffix}
                                                 labelPosition='right'
                                                 placeholder='recordName'
@@ -170,12 +173,18 @@ class DomainMgmt extends Component {
                                                 onChange={event =>
                                                     this.setState({ setRecordName: event.target.value })}
                                             />
+                                            </div>
+
+                                            <div>
                                             <Input
+                                                style={{ width: 200 }}
+                                                type="text"
                                                 placeholder='recordValue'
                                                 value={this.state.setRecordValue}
                                                 onChange={event =>
                                                     this.setState({ setRecordValue: event.target.value })}
                                             />
+                                            </div>
                                         </Form.Field>
                                                 
                                         <Message error header="Oops!" content={this.state.setErrorMessage} />
@@ -183,12 +192,14 @@ class DomainMgmt extends Component {
                                         <Button loading={this.state.setLoading} primary>Submit</Button>
                                     </Form>
 
-                                    <Divider horizontal>Or</Divider>
+                                    <Divider />
 
                                     <Form onSubmit={this.onReset} error={!!this.state.resetErrorMessage} success={!!this.state.resetSuccessMessage}>
                                         <Form.Field>
                                             <label>Reset Record</label>
                                             <Input
+                                                style={{ width: 200 }}
+                                                type="text"
                                                 label={this.props.suffix}
                                                 labelPosition='right'
                                                 placeholder='recordName'
@@ -203,12 +214,14 @@ class DomainMgmt extends Component {
                                         <Button loading={this.state.resetLoading} primary>Submit</Button>
                                     </Form>
                                     
-                                    <Divider horizontal>Or</Divider>
+                                    <Divider />
 
                                     <Form onSubmit={this.onQuery} error={!!this.state.queryErrorMessage} success={!!this.state.querySuccessMessage}>
                                         <Form.Field>
                                             <label>Query Record</label>
                                             <Input
+                                                style={{ width: 200 }}
+                                                type="text"
                                                 label={this.props.suffix}
                                                 labelPosition='right'
                                                 placeholder='recordName'

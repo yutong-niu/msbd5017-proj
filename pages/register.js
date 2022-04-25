@@ -45,6 +45,8 @@ class DomainNew extends Component {
                     <Form.Field>
                         <label>Domain Name</label>
                         <Input
+                            style={{ width: 100 }}
+                            type="text"
                             label=".hkust"
                             labelPosition='right'
                             value={this.state.domainName}
